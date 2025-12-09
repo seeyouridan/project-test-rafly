@@ -16,8 +16,7 @@ function Banner() {
 			<div
 				className="absolute inset-0 will-change-transform"
 				style={{
-					transform: `translateY(${scrollY * 0.2}px)`,
-					transition: "transform 0.05s linear",
+					// transform: `translateY(${scrollY * 0.2}px)`,
 				}}
 			>
 				<img
@@ -32,7 +31,6 @@ function Banner() {
 				className="relative z-10 max-w-7xl mx-auto h-full flex flex-col justify-center px-6 will-change-transform"
 				style={{
 					transform: `translateY(${scrollY * -0.2}px)`,
-					transition: "transform 0.05s linear",
 				}}
 			>
 				<div className="text-center">
