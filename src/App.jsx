@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import "./index.css";
-
 import Banner from "./component/Banner.jsx";
 import Header from "./component/Header.jsx";
 import Section from "./component/Section.jsx";
