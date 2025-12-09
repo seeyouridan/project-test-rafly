@@ -2,15 +2,36 @@ import { useState, useEffect } from "react";
 
 function ImageCard({ src, alt }) {
 	const placeholder = "https://placehold.co/300x200?text=No+Image";
+	const loadingImg = "https://placehold.co/300x200?text=Loading...";
+
+	const [loaded, setLoaded] = useState(false);
+	const [error, setError] = useState(false);
+
+	useEffect(() => {
+		setLoaded(false);
+		setError(false);
+	}, [src]);
 
 	return (
-		<img
-			src={src || placeholder}
-			alt={alt}
-			loading="lazy"
-			className="w-full h-48 object-cover"
-			onError={(e) => (e.currentTarget.src = placeholder)}
-		/>
+		<div className="w-full h-48 relative bg-gray-100 overflow-hidden">
+			{!loaded && !error && (
+				<img
+					src={loadingImg}
+					alt="Loading..."
+					className="absolute inset-0 w-full h-full object-cover"
+				/>
+			)}
+			<img
+				src={error ? placeholder : src}
+				alt={alt}
+				loading="lazy"
+				className={`w-full h-48 object-cover transition-opacity duration-300 ${
+					loaded ? "opacity-100" : "opacity-0"
+				}`}
+				onLoad={() => setLoaded(true)}
+				onError={() => setError(true)}
+			/>
+		</div>
 	);
 }
 
