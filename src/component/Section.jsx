@@ -1,36 +1,54 @@
 import { useState, useEffect } from "react";
 
 function ImageCard({ src, alt }) {
-	const [imgSrc, setImgSrc] = useState(null);
-
-	useEffect(() => {
-		let isMounted = true;
-
-		const loadImage = async () => {
-			try {
-				const res = await fetch(src);
-				const blob = await res.blob();
-				if (isMounted) setImgSrc(URL.createObjectURL(blob));
-			} catch (err) {
-				console.error("Image load error:", err);
-				if (isMounted) setImgSrc("https://placehold.co/300x200?text=No+Image");
-			}
-		};
-
-		loadImage();
-
-		return () => {
-			isMounted = false;
-		};
-	}, [src]);
+	const placeholder = "https://placehold.co/300x200?text=No+Image";
 
 	return (
 		<img
-			src={imgSrc || "https://placehold.co/300x200?text=Loading..."}
+			src={src || placeholder}
 			alt={alt}
 			loading="lazy"
 			className="w-full h-48 object-cover"
+			onError={(e) => (e.currentTarget.src = placeholder)}
 		/>
+	);
+}
+
+function Modal({ isOpen, onClose, idea }) {
+	if (!isOpen || !idea) return null;
+
+	return (
+		<div
+			className="fixed inset-0 bg-black/50 flex justify-center items-start pt-20 z-50 overflow-auto"
+			onClick={onClose}
+		>
+			<div
+				className="bg-white rounded-lg shadow-lg max-w-3xl w-full mx-4 p-6 relative"
+				onClick={(e) => e.stopPropagation()}
+			>
+				<button
+					className="absolute top-3 right-3 text-gray-500 hover:text-gray-900 font-bold text-2xl"
+					onClick={onClose}
+				>
+					×
+				</button>
+				<h2 className="text-2xl font-bold mb-4">{idea.title}</h2>
+
+				<hr className="pb-2" />
+
+				<span className="text-gray-400 text-sm mb-2">
+					{new Date(idea.published_at).toLocaleDateString("id-ID", {
+						day: "2-digit",
+						month: "long",
+						year: "numeric",
+					})}
+				</span>
+				<div
+					className="prose max-w-full text-justify"
+					dangerouslySetInnerHTML={{ __html: idea.content }}
+				/>
+			</div>
+		</div>
 	);
 }
 
@@ -44,6 +62,9 @@ function Section() {
 	const [perPage, setPerPage] = useState(savedPerPage);
 	const [sortOrder, setSortOrder] = useState(savedSort);
 	const [totalItems, setTotalItems] = useState(0);
+
+	const [selectedIdea, setSelectedIdea] = useState(null);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const perPageOptions = [10, 20, 50];
 
@@ -84,6 +105,16 @@ function Section() {
 
 	const handlePageChange = (page) => {
 		if (page >= 1 && page <= totalPages) setCurrentPage(page);
+	};
+
+	const openModal = (idea) => {
+		setSelectedIdea(idea);
+		setIsModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setSelectedIdea(null);
+		setIsModalOpen(false);
 	};
 
 	return (
@@ -129,10 +160,13 @@ function Section() {
 						const img =
 							item.medium_image?.[0]?.url || item.small_image?.[0]?.url;
 
+						// console.log("Card Image URL:", img);
+
 						return (
 							<div
 								key={item.id}
-								className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col"
+								className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col cursor-pointer hover:shadow-xl transition-shadow"
+								onClick={() => openModal(item)}
 							>
 								<ImageCard src={img} alt={item.title} />
 								<div className="p-4 flex flex-col flex-1">
@@ -154,7 +188,6 @@ function Section() {
 			</div>
 
 			<div className="max-w-7xl mx-auto px-6 mt-6 flex justify-center gap-0 sm:gap-1 md:gap-2 text-xs md:text-base flex-wrap text-gray-700">
-				{/* button kiri */}
 				<button
 					onClick={() => handlePageChange(1)}
 					className="px-3 py-1 rounded hover:bg-[#ff822f] font-bold transition-all hover:text-white duration-300 disabled:bg-white disabled:cursor-not-allowed disabled:text-gray-300"
@@ -170,7 +203,6 @@ function Section() {
 					&lt;
 				</button>
 
-				{/* button page */}
 				{Array.from({ length: totalPages }, (_, i) => i + 1)
 					.slice(
 						Math.max(0, currentPage - 3),
@@ -190,7 +222,6 @@ function Section() {
 						</button>
 					))}
 
-				{/* button kanan */}
 				<button
 					onClick={() => handlePageChange(currentPage + 1)}
 					className="px-3 py-1 rounded hover:bg-[#ff822f] font-bold transition-all hover:text-white duration-300 disabled:bg-white disabled:cursor-not-allowed disabled:text-gray-300"
@@ -206,6 +237,8 @@ function Section() {
 					&gt;&gt;
 				</button>
 			</div>
+
+			<Modal isOpen={isModalOpen} onClose={closeModal} idea={selectedIdea} />
 		</section>
 	);
 }
