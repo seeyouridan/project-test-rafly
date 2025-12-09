@@ -88,7 +88,7 @@ function Section() {
 
 	return (
 		<section className="py-8">
-			<div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+			<div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row text-xs md:text-base justify-between items-center mb-6 gap-4">
 				<div className="text-gray-700">
 					Showing {(currentPage - 1) * perPage + 1} -{" "}
 					{Math.min(currentPage * perPage, totalItems)} of {totalItems} items

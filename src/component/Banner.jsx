@@ -43,7 +43,7 @@ function Banner() {
 				</div>
 			</div>
 
-			<div className="absolute bottom-0 left-0 w-full h-50 overflow-hidden">
+			<div className="absolute bottom-0 left-0 w-full h-25 md:h-50 overflow-hidden">
 				<div className="w-full h-full bg-white [clip-path:polygon(100%_0%,0%_100%,100%_100%)]" />
 			</div>
 		</header>

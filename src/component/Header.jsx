@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 function Header() {
 	const [showHeader, setShowHeader] = useState(true);
 	const [lastScrollY, setLastScrollY] = useState(0);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -24,6 +25,15 @@ function Header() {
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, [lastScrollY]);
 
+	const navItems = [
+		{ href: "#", label: "Work" },
+		{ href: "#", label: "About" },
+		{ href: "#", label: "Services" },
+		{ href: "/", label: "Ideas" },
+		{ href: "#", label: "Careers" },
+		{ href: "#", label: "Contact" },
+	];
+
 	return (
 		<nav
 			className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
@@ -39,26 +49,58 @@ function Header() {
 					/>
 				</a>
 
-				<ul className="flex gap-6 text-sm font-medium">
-					<NavItem href="#" label="Work" />
-					<NavItem href="#" label="About" />
-					<NavItem href="#" label="Services" />
-					<NavItem href="/" label="Ideas" />
-					<NavItem href="#" label="Careers" />
-					<NavItem href="#" label="Contact" />
+				<ul className="hidden md:flex gap-6 text-sm font-medium">
+					{navItems.map((item) => (
+						<NavItem key={item.href} href={item.href} label={item.label} />
+					))}
 				</ul>
+
+				<button
+					className="md:hidden flex flex-col justify-between w-6 h-6 focus:outline-none"
+					onClick={() => setIsMenuOpen(!isMenuOpen)}
+				>
+					<span
+						className={`block h-0.5 w-full bg-white transition-all ${
+							isMenuOpen ? "rotate-45 translate-y-2" : ""
+						}`}
+					/>
+					<span
+						className={`block h-0.5 w-full bg-white transition-all ${
+							isMenuOpen ? "opacity-0" : ""
+						}`}
+					/>
+					<span
+						className={`block h-0.5 w-full bg-white transition-all ${
+							isMenuOpen ? "-rotate-45 -translate-y-2" : ""
+						}`}
+					/>
+				</button>
 			</div>
+
+			{isMenuOpen && (
+				<ul className="md:hidden flex flex-col bg-[#f96500] w-full px-6 pb-4 gap-4">
+					{navItems.map((item) => (
+						<NavItem
+							key={item.href}
+							href={item.href}
+							label={item.label}
+							onClick={() => setIsMenuOpen(false)}
+						/>
+					))}
+				</ul>
+			)}
 		</nav>
 	);
 }
 
-function NavItem({ href, label }) {
+function NavItem({ href, label, onClick }) {
 	const isActive = window.location.pathname === href;
 
 	return (
 		<li>
 			<a
 				href={href}
+				onClick={onClick}
 				className={
 					"transition-colors " +
 					(isActive
