@@ -93,7 +93,8 @@ function Section() {
 		try {
 			const sortParam = sort === "newest" ? "-published_at" : "published_at";
 			const res = await fetch(
-				`/api/ideas?page[number]=${page}&page[size]=${perPage}&append[]=small_image&append[]=medium_image&sort=${sortParam}`,
+				// `/api/ideas?page[number]=${page}&page[size]=${perPage}&append[]=small_image&append[]=medium_image&sort=${sortParam}`,
+				`https://suitmedia-backend.suitdev.com/api/ideas?page[number]=${page}&page[size]=${perPage}&append[]=small_image&append[]=medium_image&sort=${sortParam}`,
 				{ headers: { Accept: "application/json" } }
 			);
 			const data = await res.json();
